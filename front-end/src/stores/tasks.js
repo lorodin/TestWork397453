@@ -136,7 +136,7 @@ export default {
         this.state.form.loading = false
       },
       onInvalid: (errors) => {
-        this.state.form.errors = Object.entries(errors).map(err => err[0])
+        this.state.form.errors = errors
         this.state.form.loading = false
       },
       onUnAuth: () => {

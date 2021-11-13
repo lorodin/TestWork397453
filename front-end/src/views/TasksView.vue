@@ -12,7 +12,7 @@
   <edit-form v-if="form.show"
              :task="form.task"
              :loading="form.loading"
-             :errors="form.errors"
+             :errors="formErrors"
              @save="saveTask" @close="closeForm"/>
   <tasks-list />
 </div>
@@ -33,7 +33,8 @@ export default {
     }
   },
   computed: {
-    notify: () => tasks.state.notify
+    notify: () => tasks.state.notify,
+    formErrors: () => tasks.state.form.errors
   },
   methods: {
     saveTask (task) {

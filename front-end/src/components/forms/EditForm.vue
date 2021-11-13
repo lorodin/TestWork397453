@@ -4,28 +4,25 @@
     <preloader :show="loading" />
     <div class="head">
       <span class="title">{{ task.id ? 'Edit' : 'Create' }} task</span>
-      <span class="close-btn" title="close" @click="() => $emit('close')">❌</span>
     </div>
     <div class="body form">
-      <ul class="errors">
-        <li v-for="error in errors" :key="error">
-          {{ parseError(error) }}
-        </li>
-      </ul>
-      <div class="input-group">
-        <label>Name</label>
-        <input type="text" v-model="name" placeholder="name"/>
-      </div>
-      <div class="input-group">
-        <label>Description</label>
-        <textarea v-model="description" placeholder="description"></textarea>
-      </div>
+      <label-input v-model="name"
+                   label="Name"
+                   placeholder="name"
+                   :errors="errors.name || []"
+                   @input="(val) => this.name = val" />
+      <label-input v-model="description"
+                   label="Description"
+                   type="textarea"
+                   placeholder="description"
+                   :errors="errors.description || []"
+                   @input="(val) => this.description = val" />
     </div>
     <div class="footer">
-      <button @click="() => $emit('save', { id: id, name: name, description: description, completed: task.completed })">
+      <button class="btn btn-success" @click="() => $emit('save', { id: id, name: name, description: description, completed: task.completed })">
         Save
       </button>
-      <button @click="() => $emit('close')">
+      <button class="btn btn-danger" @click="() => $emit('close')">
         Close
       </button>
     </div>
@@ -36,9 +33,10 @@
 <script>
 
 import Preloader from '../common/Preloader'
+import LabelInput from '../common/LabelInput'
 export default {
   name: 'EditForm',
-  components: { Preloader },
+  components: { LabelInput, Preloader },
   emits: ['save', 'close'],
   props: {
     loading: Boolean,
@@ -46,23 +44,15 @@ export default {
       type: Object
     },
     errors: {
-      type: Array
+      type: Object
     }
   },
   data () {
     return {
       id: this.task.id,
-      name: this.task.name,
-      description: this.task.description
-    }
-  },
-  methods: {
-    parseError: (error) => {
-      switch (error) {
-        case 'name': return 'Task name is required'
-        case 'description': return 'Task description is required'
-      }
-      return 'Unknown error'
+      name: this.task.name || '',
+      description: this.task.description,
+      errs2: []
     }
   }
 }
@@ -76,7 +66,6 @@ export default {
   position: absolute;
   flex-direction: column;
   background: #fff;
-  border-radius: .4em;
   min-width: 320px;
   padding: 0;
   top: 50%;
@@ -87,18 +76,14 @@ export default {
   }
 
   .head {
-    display: flex;
-    background: $color-dark;
-    color: $color-light;
-    border-top-left-radius: .4em;
-    border-top-right-radius: .4em;
-    padding: 0 .4em;
+    border-bottom: 1px solid $color-gray;
+    padding: 1em .5em .5em;
     line-height: 1.8em;
-    justify-content: space-between;
+  }
 
-    .close-btn {
-      cursor: pointer;
-    }
+  textarea {
+    resize: none;
+    min-height: 100px;
   }
 
   .footer {

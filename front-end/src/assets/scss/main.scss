@@ -48,16 +48,54 @@ body, html {
   .input-group {
     display: flex;
     flex-direction: column;
-    margin-top: .4em;
+    margin-top: .8em;
+  }
 
-    textarea {
-      resize: none;
-      min-height: 100px;
-    }
+  label {
+    font-size: .8em;
+    margin-bottom: .2em;
+  }
+
+  input, textarea {
+    border: 1px solid $color-gray;
+    padding: .3em;
+    border-radius: .3em;
   }
 
   .fail {
     border-color: $color-red
+  }
+}
+
+.btn {
+  background: none;
+  border: 1px solid;
+  border-radius: .3em;
+  padding: .3em;
+  cursor: pointer;
+  transition: .15s ease-in;
+
+  &-success {
+    background: $color-success;
+  }
+
+  &-danger {
+    background: $color-warning;
+  }
+
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.link {
+  color: $color-blue;
+  font-size: .8em;
+  cursor: pointer;
+  transition: .15s ease-in;
+
+  &:hover {
+    opacity: .8;
   }
 }
 

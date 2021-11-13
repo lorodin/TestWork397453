@@ -108,7 +108,7 @@ function addTask ({
     .catch((err) => {
       const { response } = err
 
-      if (response.data.status === 422) {
+      if (response.status === 422) {
         onInvalid(response.data.errors)
       } else if (response.status === 401) {
         onUnAuth()
