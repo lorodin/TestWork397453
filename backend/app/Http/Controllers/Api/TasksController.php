@@ -9,12 +9,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @OA\Info(
- *    title="TODOs application",
- *    version="777",
- * )
- */
 class TasksController extends ApiController
 {
     const TODOS_ON_PAGE = 10;
@@ -25,6 +19,8 @@ class TasksController extends ApiController
      * @OA\Get(
      *      path="/api/tasks/list/{page}",
      *      summary="Tasks list",
+     *      tags={"Tasks"},
+     *      security={{"bearerAuth":{}}},
      *      description="Return list of tasks",
      *      @OA\Parameter(
      *          name="page",
@@ -111,6 +107,8 @@ class TasksController extends ApiController
      * @OA\Post (
      *      path="/api/tasks/create",
      *      summary="Create task",
+     *      tags={"Tasks"},
+     *      security={{"bearerAuth":{}}},
      *      description="Create task",
      *      @OA\RequestBody(
      *          request="Task create request",
@@ -159,6 +157,8 @@ class TasksController extends ApiController
      * @OA\Delete (
      *     path="/api/tasks/delete/{id}",
      *     summary="Delete task",
+     *     tags={"Tasks"},
+     *     security={{"bearerAuth":{}}},
      *     description="Delete task",
      *     @OA\Parameter(
      *         name="id",
@@ -203,6 +203,8 @@ class TasksController extends ApiController
      * @OA\Post (
      *      path="/api/tasks/update/{id}",
      *      summary="Update task",
+     *      tags={"Tasks"},
+     *      security={{"bearerAuth":{}}},
      *      description="Update task",
      *      @OA\Parameter(
      *          name="id",
@@ -242,7 +244,7 @@ class TasksController extends ApiController
      *                   type="array",
      *                   @OA\Items (
      *                      type="string",
-     *                      example="Hello example"
+     *                      example="Error message"
      *                   )
      *              )
      *          )

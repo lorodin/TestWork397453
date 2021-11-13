@@ -64,18 +64,13 @@ class Handler extends ExceptionHandler
             }
         });
 
-//        $this->renderable(function (Throwable $throw, $request) {
-//            if ($request->is('api/*')) {
-//                return response()->json([
-//                    'status' => 'error',
-//                    'message' => 'Server error =('
-//                ], 500);
-//            }
-//        });
+        $this->renderable(function (Throwable $throw, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Server error =('
+                ], 500);
+            }
+        });
     }
-
-//    protected function unauthenticated(, )
-//    {
-//
-//    }
 }

@@ -4,6 +4,34 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+
+/**
+ * Register request
+ *
+ * @OA\Schema (
+ *     @OA\Xml(name="RegisterRequest"),
+ *     @OA\Property (
+ *          property="name",
+ *          type="string",
+ *          example="username"
+ *     ),
+ *     @OA\Property (
+ *          property="email",
+ *          type="string",
+ *          example="user@email.com"
+ *     ),
+ *     @OA\Property (
+ *          property="password",
+ *          type="password",
+ *          example="password"
+ *     ),
+ *     @OA\Property (
+ *          property="confirm",
+ *          type="password",
+ *          example="password"
+ *     )
+ * )
+ */
 class RegisterRequest extends FormRequest
 {
     /**
