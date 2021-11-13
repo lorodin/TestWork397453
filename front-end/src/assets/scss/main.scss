@@ -1,0 +1,31 @@
+@import url(http://fonts.googleapis.com/css?family=Helvetica:400italic,700italic,400,700);
+
+$helvetica-slab: 'Helvetica', serif;
+
+body, html {
+  padding: 0;
+  margin: 0;
+  font-family: $helvetica-slab;
+  font-weight: normal;
+}
+
+#app {
+  display: flex;
+  justify-content: center;
+}
+
+.red {
+  color: red;
+}
+
+.overflow {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}

@@ -1,0 +1,248 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "TODOs application",
+        "version": "777"
+    },
+    "paths": {
+        "/api/tasks/list/{page}": {
+            "get": {
+                "summary": "Tasks list",
+                "description": "Return list of tasks",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "description": "Page of list",
+                        "required": true,
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "per_page": {
+                                                    "type": "int",
+                                                    "example": "10"
+                                                },
+                                                "page": {
+                                                    "type": "int",
+                                                    "example": "1"
+                                                },
+                                                "count": {
+                                                    "type": "int",
+                                                    "example": "100"
+                                                },
+                                                "list": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Task"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tasks/create": {
+            "post": {
+                "summary": "Create task",
+                "description": "Create task",
+                "operationId": "9cbf95971b47b3009c243d3294cfb1a0",
+                "requestBody": {
+                    "request": "Task create request",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TaskCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Saved result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tasks/delete/{id}": {
+            "delete": {
+                "summary": "Delete task",
+                "description": "Delete task",
+                "operationId": "40647bc8bfecc2875b790b7379f3b80e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Task id",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tasks/update/{id}": {
+            "post": {
+                "summary": "Update task",
+                "description": "Update task",
+                "operationId": "eccd7d8cd96011f3b929c0b7783a379d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Task id",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "request": "Task update request",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TaskUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TaskCreateRequest": {
+                "description": "Create task request",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "task 1"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "TaskCreateRequest"
+                }
+            },
+            "TaskUpdateRequest": {
+                "description": "Update task request",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "task 1"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description"
+                    },
+                    "completed": {
+                        "type": "bool",
+                        "example": "1"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "TaskUpdateRequest"
+                }
+            },
+            "Task": {
+                "description": "Task model",
+                "properties": {
+                    "id": {
+                        "type": "int",
+                        "example": "1"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "task 1"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description 1"
+                    },
+                    "completed": {
+                        "type": "bool",
+                        "example": "true"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Task"
+                }
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
