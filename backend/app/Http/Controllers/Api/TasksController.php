@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\TaskCreateRequest;
 use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Info(
@@ -77,7 +79,13 @@ class TasksController extends ApiController
     {
         $page = !isset($page) || $page < 1 ? 1 : $page;
 
+        /**
+         * @var User $user
+         */
+        $user = Auth::user();
+
         $tasks = Task::query()
+            ->where('user_id', $user->id)
             ->skip(($page - 1) * self::TODOS_ON_PAGE)
             ->take(self::TODOS_ON_PAGE)
             ->orderBy('created_at', 'desc')
@@ -90,7 +98,9 @@ class TasksController extends ApiController
         return $this->jsonResponse(true, [
             'page' => $page,
             'per_page' => self::TODOS_ON_PAGE,
-            'count' => Task::query()->count(),
+            'count' => Task::query()
+                ->where('user_id', $user->id)
+                ->count(),
             'list' => $tasks,
         ]);
     }
@@ -130,11 +140,17 @@ class TasksController extends ApiController
     {
         $validated = $request->validated();
 
-        $todo = new Task;
-        $todo->name = $validated['name'];
-        $todo->description = $validated['description'];
+        /**
+         * @var User $user
+         */
+        $user = Auth::user();
 
-        return $this->jsonResponse($todo->save());
+        $task = new Task;
+        $task->name = $validated['name'];
+        $task->description = $validated['description'];
+        $task->user_id = $user->id;
+
+        return $this->jsonResponse($task->save());
     }
 
     /**
@@ -168,8 +184,14 @@ class TasksController extends ApiController
      */
     public function delete(int $id): JsonResponse
     {
+        /**
+         * @var User $user
+         */
+        $user = Auth::user();
+
         $result = Task::query()
             ->where('id', $id)
+            ->where('user_id', $user->id)
             ->delete();
 
         return $this->jsonResponse($result == 1);
@@ -237,10 +259,16 @@ class TasksController extends ApiController
         $validated = $request->validated();
 
         /**
+         * @var User $user
+         */
+        $user = Auth::user();
+
+        /**
          * @var Task $task
          */
         $task = Task::query()
             ->where('id', $id)
+            ->where('user_id', $user->id)
             ->firstOrFail();
 
         if ($task->completed) {

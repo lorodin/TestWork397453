@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $description
  * @property boolean $completed
+ * @property int $user_id
  */
 class Task extends Model
 {

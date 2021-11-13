@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -54,13 +55,27 @@ class Handler extends ExceptionHandler
             }
         });
 
-        $this->renderable(function (Throwable $throw, $request) {
+        $this->renderable(function (AuthenticationException $exception, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Server error =('
-                ], 500);
+                    'message' => 'Unauthenticated'
+                ], 401);
             }
         });
+
+//        $this->renderable(function (Throwable $throw, $request) {
+//            if ($request->is('api/*')) {
+//                return response()->json([
+//                    'status' => 'error',
+//                    'message' => 'Server error =('
+//                ], 500);
+//            }
+//        });
     }
+
+//    protected function unauthenticated(, )
+//    {
+//
+//    }
 }

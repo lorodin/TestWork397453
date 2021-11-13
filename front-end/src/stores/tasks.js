@@ -3,6 +3,10 @@ import api from '../core/api'
 
 export default {
   state: reactive({
+    login: {
+      loading: false,
+      errors: {}
+    },
     pageInfo: {
       loading: false,
       current: 1,
@@ -21,6 +25,54 @@ export default {
       }
     }
   }),
+
+  resetTokenAction () {
+    console.log('reset token')
+    localStorage.setItem('token', '')
+    window.location = '/login'
+  },
+
+  loginAction (data) {
+    this.state.login.loading = true
+
+    api.login({
+      data,
+      onSuccess: (token) => {
+        localStorage.setItem('token', token)
+        console.log(token)
+        window.location = '/'
+      },
+      onInvalid: (errors) => {
+        console.log(errors)
+        this.state.login.errors = errors
+        this.state.login.loading = false
+      },
+      onError: (err) => {
+        this.state.login.loading = false
+        if (err.message) {
+          this.state.login.errors.login = [err.message]
+        }
+      }
+    })
+  },
+
+  registerAction (data) {
+    this.state.login.loading = true
+
+    api.register({
+      data,
+      onSuccess: (token) => {
+        localStorage.setItem('token', token)
+        console.log(token)
+        window.location = '/'
+      },
+      onInvalid: (errors) => {
+        console.log(errors)
+        this.state.login.errors = errors
+        this.state.login.loading = false
+      }
+    })
+  },
 
   closeEditFormAction () {
     this.state.form.show = false
@@ -53,6 +105,9 @@ export default {
       },
       onError: (resp) => {
         console.error(resp)
+      },
+      onUnAuth: () => {
+        this.resetTokenAction()
       }
     })
   },
@@ -83,6 +138,9 @@ export default {
       onInvalid: (errors) => {
         this.state.form.errors = Object.entries(errors).map(err => err[0])
         this.state.form.loading = false
+      },
+      onUnAuth: () => {
+        this.resetTokenAction()
       }
     })
   },
@@ -101,6 +159,10 @@ export default {
       onError: (err) => {
         this.state.pageInfo.loading = false
         console.error(err)
+      },
+      onUnAuth: () => {
+        console.log('Auth error')
+        this.resetTokenAction()
       }
     })
   },
@@ -116,6 +178,9 @@ export default {
       onError: (resp) => {
         console.log(resp)
         this.state.pageInfo.loading = false
+      },
+      onUnAuth: () => {
+        this.resetTokenAction()
       }
     })
   }

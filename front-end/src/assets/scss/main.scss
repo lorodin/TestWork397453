@@ -1,3 +1,4 @@
+@import "./colors";
 @import url(http://fonts.googleapis.com/css?family=Helvetica:400italic,700italic,400,700);
 
 $helvetica-slab: 'Helvetica', serif;
@@ -28,4 +29,47 @@ body, html {
   top: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1000;
+}
+
+.page {
+  width: 1024px;
+  @media screen and (max-width: 1024px){
+    width: 100%;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  padding: 0 .4em .4em;
+  max-height: 280px;
+  overflow: auto;
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: .4em;
+
+    textarea {
+      resize: none;
+      min-height: 100px;
+    }
+  }
+
+  .fail {
+    border-color: $color-red
+  }
+}
+
+.content-center {
+  display: flex;
+  justify-content: center;
+}
+
+.errors {
+  padding: 0;
+  margin: .4em .4em .4em 0;
+  color: $color-red;
+  list-style: none;
+  font-size: .7em;
 }

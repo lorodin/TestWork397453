@@ -6,7 +6,7 @@
       <span class="title">{{ task.id ? 'Edit' : 'Create' }} task</span>
       <span class="close-btn" title="close" @click="() => $emit('close')">❌</span>
     </div>
-    <div class="body">
+    <div class="body form">
       <ul class="errors">
         <li v-for="error in errors" :key="error">
           {{ parseError(error) }}
@@ -86,12 +86,6 @@ export default {
     width: 100%;
   }
 
-  .errors {
-    padding: 0 .5em;
-    margin: .4em;
-    color: $color-red;
-  }
-
   .head {
     display: flex;
     background: $color-dark;
@@ -104,25 +98,6 @@ export default {
 
     .close-btn {
       cursor: pointer;
-    }
-  }
-
-  .body {
-    display: flex;
-    flex-direction: column;
-    padding: 0 .4em .4em;
-    max-height: 280px;
-    overflow: auto;
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      margin-top: .4em;
-
-      textarea {
-        resize: none;
-        min-height: 100px;
-      }
     }
   }
 
