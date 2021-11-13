@@ -11,28 +11,74 @@ const DELETE = 'delete'
 
 const SUCCESS = 'success'
 
+const wrapFun = (f) => f || (() => {})
+
 function getHeaders () {
   return {
     Authorization: 'Bearer ' + localStorage.getItem('token')
   }
 }
 
-async function get (url) {
-  return axios.get(url, {
+function get (url, onSuccess, onUnAuth, onError) {
+  axios.get(url, {
     headers: getHeaders()
-  })
+  }).then(resp => onSuccess(resp.data.data))
+    .catch(err => {
+      const { response } = err
+      if (response.status === 401) {
+        onUnAuth()
+      } else {
+        if (process.env.VUE_APP_DEBUG) {
+          console.error(err)
+        }
+        onError(err)
+      }
+    })
 }
 
-async function post (url, data) {
-  return axios.post(url, data, {
-    headers: getHeaders()
-  })
+function post (url, data, onSuccess, onError, onInvalid, onUnAuth = () => {}) {
+  axios.post(url, data, { headers: getHeaders() })
+    .then(resp => {
+      const { data } = resp
+      if (data.status === SUCCESS) {
+        onSuccess(data.data)
+      } else {
+        if (process.env.VUE_APP_DEBUG) {
+          console.error(resp)
+        }
+        onError(resp)
+      }
+    })
+    .catch(err => {
+      const response = { err }
+      if (response.status === 422) {
+        onInvalid(response.data.errors)
+      } else if (response.status === 401) {
+        onUnAuth()
+      } else {
+        if (process.env.VUE_APP_DEBUG) {
+          console.error(err)
+        }
+        onError(err)
+      }
+    })
 }
 
-async function del (url) {
-  return axios.delete(url, {
-    headers: getHeaders()
-  })
+function del (url, onSuccess, onError, onUnAuth) {
+  axios.delete(url, { headers: getHeaders() })
+    .then(onSuccess)
+    .catch(err => {
+      const { response } = err
+
+      if (response.status === 401) {
+        onUnAuth()
+      } else {
+        if (process.env.VUE_APP_DEBUG) {
+          console.error(err)
+        }
+        onError(err)
+      }
+    })
 }
 
 function register ({
@@ -41,25 +87,13 @@ function register ({
   onError,
   onInvalid
 }) {
-  post(API_URL_REGISTER, data)
-    .then(resp => {
-      const { data } = resp
-      if (data.status === SUCCESS) {
-        onSuccess(data.data.token)
-      } else {
-        console.error(resp)
-        onError(resp)
-      }
-    })
-    .catch(err => {
-      const { response } = err
-      if (response.status === 422) {
-        onInvalid(response.data.errors)
-      } else {
-        console.error(err)
-        onError(err)
-      }
-    })
+  post(
+    API_URL_REGISTER,
+    data,
+    wrapFun(onSuccess),
+    wrapFun(onError),
+    wrapFun(onInvalid)
+  )
 }
 
 function login ({
@@ -68,24 +102,13 @@ function login ({
   onError,
   onInvalid
 }) {
-  post(API_URL_LOGIN, data)
-    .then(resp => {
-      const { data } = resp
-      if (data.status === SUCCESS) {
-        onSuccess(data.data.token)
-      } else {
-        onError(data)
-      }
-    })
-    .catch(err => {
-      const { response } = err
-      if (response.status === 422) {
-        onInvalid(response.data.errors)
-      } else {
-        console.error(err)
-        onError(err)
-      }
-    })
+  post(
+    API_URL_LOGIN,
+    data,
+    wrapFun(onSuccess),
+    wrapFun(onError),
+    wrapFun(onInvalid)
+  )
 }
 
 function addTask ({
@@ -95,27 +118,14 @@ function addTask ({
   onInvalid,
   onUnAuth
 }) {
-  post(`${API_URL_TASKS}${ADD}`, task)
-    .then((response) => {
-      const { data } = response
-
-      if (data.status === SUCCESS) {
-        onSuccess(data.data)
-      } else if (onError) {
-        onError(data)
-      }
-    })
-    .catch((err) => {
-      const { response } = err
-
-      if (response.status === 422) {
-        onInvalid(response.data.errors)
-      } else if (response.status === 401) {
-        onUnAuth()
-      } else {
-        onError(err)
-      }
-    })
+  post(
+    `${API_URL_TASKS}${ADD}`,
+    task,
+    wrapFun(onSuccess),
+    wrapFun(onError),
+    wrapFun(onInvalid),
+    wrapFun(onUnAuth)
+  )
 }
 
 function updateTask ({
@@ -129,26 +139,14 @@ function updateTask ({
     throw new Error('Task id not set ot it`s not a number ' + task.id)
   }
 
-  post(`${API_URL_TASKS}${UPDATE}/${task.id}`, task)
-    .then(response => {
-      const { data } = response
-
-      if (data.status === SUCCESS) {
-        onSuccess(data)
-      } else {
-        onError(response)
-      }
-    })
-    .catch(err => {
-      const { response } = err
-      if (response.status === 422) {
-        onInvalid(response.data.errors)
-      } else if (response.status === 401) {
-        onUnAuth()
-      } else {
-        onError(err)
-      }
-    })
+  post(
+    `${API_URL_TASKS}${UPDATE}/${task.id}`,
+    task,
+    wrapFun(onSuccess),
+    wrapFun(onError),
+    wrapFun(onInvalid),
+    wrapFun(onUnAuth)
+  )
 }
 
 function getList ({
@@ -157,24 +155,11 @@ function getList ({
   onError,
   onUnAuth
 }) {
-  get(`${API_URL_TASKS}${LIST}/${page || ''}`)
-    .then(response => {
-      const { data } = response
-
-      if (data.status === SUCCESS) {
-        onSuccess(data.data)
-      } else {
-        onError(data)
-      }
-    })
-    .catch(err => {
-      const { response } = err
-      if (response.status === 401) {
-        onUnAuth()
-      } else {
-        onError(err)
-      }
-    })
+  get(`${API_URL_TASKS}${LIST}/${page || ''}`,
+    wrapFun(onSuccess),
+    wrapFun(onUnAuth),
+    wrapFun(onError)
+  )
 }
 
 function delTask ({
@@ -187,25 +172,12 @@ function delTask ({
     throw new Error('Id not setting or it`s not a number')
   }
 
-  del(`${API_URL_TASKS}${DELETE}/${id}`)
-    .then(response => {
-      const { data } = response
-
-      if (data.status === SUCCESS) {
-        onSuccess()
-      } else {
-        onError(data)
-      }
-    })
-    .catch(err => {
-      const { response } = err
-
-      if (response.data.status === 401) {
-        onUnAuth()
-      } else {
-        onError(err)
-      }
-    })
+  del(
+    `${API_URL_TASKS}${DELETE}/${id}`,
+    wrapFun(onSuccess),
+    wrapFun(onError),
+    wrapFun(onUnAuth)
+  )
 }
 
 export default {

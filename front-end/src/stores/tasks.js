@@ -37,9 +37,8 @@ export default {
 
     api.login({
       data,
-      onSuccess: (token) => {
-        localStorage.setItem('token', token)
-        console.log(token)
+      onSuccess: (data) => {
+        localStorage.setItem('token', data.token)
         window.location = '/'
       },
       onInvalid: (errors) => {
@@ -61,13 +60,11 @@ export default {
 
     api.register({
       data,
-      onSuccess: (token) => {
-        localStorage.setItem('token', token)
-        console.log(token)
+      onSuccess: (data) => {
+        localStorage.setItem('token', data.token)
         window.location = '/'
       },
       onInvalid: (errors) => {
-        console.log(errors)
         this.state.login.errors = errors
         this.state.login.loading = false
       }
@@ -151,17 +148,15 @@ export default {
     api.getList({
       page: page,
       onSuccess: (data) => {
-        this.state.pageInfo.pages = (data.count + data.per_page - data.count % data.per_page) / data.per_page
         this.state.pageInfo.current = data.page
+        this.state.pageInfo.pages = (data.count + data.per_page - data.count % data.per_page) / data.per_page
         this.state.tasks = data.list
         this.state.pageInfo.loading = false
       },
-      onError: (err) => {
+      onError: () => {
         this.state.pageInfo.loading = false
-        console.error(err)
       },
       onUnAuth: () => {
-        console.log('Auth error')
         this.resetTokenAction()
       }
     })
