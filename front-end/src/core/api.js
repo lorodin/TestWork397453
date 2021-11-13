@@ -10,8 +10,10 @@ const UPDATE = 'update'
 const DELETE = 'delete'
 
 const SUCCESS = 'success'
+const STATUS_UNAUTHOTIZED = 401
+const STATUS_INVALIDATE = 422
 
-const wrapFun = (f) => f || (() => {})
+const selfFun = (f) => f || (() => {})
 
 function getHeaders () {
   return {
@@ -25,7 +27,7 @@ function get (url, onSuccess, onUnAuth, onError) {
   }).then(resp => onSuccess(resp.data.data))
     .catch(err => {
       const { response } = err
-      if (response.status === 401) {
+      if (response.status === STATUS_UNAUTHOTIZED) {
         onUnAuth()
       } else {
         if (process.env.VUE_APP_DEBUG) {
@@ -51,9 +53,9 @@ function post (url, data, onSuccess, onError, onInvalid, onUnAuth = () => {}) {
     })
     .catch(err => {
       const response = { err }
-      if (response.status === 422) {
+      if (response.status === STATUS_INVALIDATE) {
         onInvalid(response.data.errors)
-      } else if (response.status === 401) {
+      } else if (response.status === STATUS_UNAUTHOTIZED) {
         onUnAuth()
       } else {
         if (process.env.VUE_APP_DEBUG) {
@@ -70,7 +72,7 @@ function del (url, onSuccess, onError, onUnAuth) {
     .catch(err => {
       const { response } = err
 
-      if (response.status === 401) {
+      if (response.status === STATUS_UNAUTHOTIZED) {
         onUnAuth()
       } else {
         if (process.env.VUE_APP_DEBUG) {
@@ -90,9 +92,9 @@ function register ({
   post(
     API_URL_REGISTER,
     data,
-    wrapFun(onSuccess),
-    wrapFun(onError),
-    wrapFun(onInvalid)
+    selfFun(onSuccess),
+    selfFun(onError),
+    selfFun(onInvalid)
   )
 }
 
@@ -105,9 +107,9 @@ function login ({
   post(
     API_URL_LOGIN,
     data,
-    wrapFun(onSuccess),
-    wrapFun(onError),
-    wrapFun(onInvalid)
+    selfFun(onSuccess),
+    selfFun(onError),
+    selfFun(onInvalid)
   )
 }
 
@@ -121,10 +123,10 @@ function addTask ({
   post(
     `${API_URL_TASKS}${ADD}`,
     task,
-    wrapFun(onSuccess),
-    wrapFun(onError),
-    wrapFun(onInvalid),
-    wrapFun(onUnAuth)
+    selfFun(onSuccess),
+    selfFun(onError),
+    selfFun(onInvalid),
+    selfFun(onUnAuth)
   )
 }
 
@@ -136,16 +138,19 @@ function updateTask ({
   onUnAuth
 }) {
   if (!task.id || isNaN(task.id)) {
-    throw new Error('Task id not set ot it`s not a number ' + task.id)
+    if (process.env.VUE_APP_DEBUG) {
+      console.error('Task id not set ot it`s not a number ' + task.id)
+    }
+    return
   }
 
   post(
     `${API_URL_TASKS}${UPDATE}/${task.id}`,
     task,
-    wrapFun(onSuccess),
-    wrapFun(onError),
-    wrapFun(onInvalid),
-    wrapFun(onUnAuth)
+    selfFun(onSuccess),
+    selfFun(onError),
+    selfFun(onInvalid),
+    selfFun(onUnAuth)
   )
 }
 
@@ -156,9 +161,9 @@ function getList ({
   onUnAuth
 }) {
   get(`${API_URL_TASKS}${LIST}/${page || ''}`,
-    wrapFun(onSuccess),
-    wrapFun(onUnAuth),
-    wrapFun(onError)
+    selfFun(onSuccess),
+    selfFun(onUnAuth),
+    selfFun(onError)
   )
 }
 
@@ -169,14 +174,17 @@ function delTask ({
   onUnAuth
 }) {
   if (!id || isNaN(id)) {
-    throw new Error('Id not setting or it`s not a number')
+    if (process.env.VUE_APP_DEBUG) {
+      console.error('Task id not set ot it`s not a number ' + id)
+    }
+    return
   }
 
   del(
     `${API_URL_TASKS}${DELETE}/${id}`,
-    wrapFun(onSuccess),
-    wrapFun(onError),
-    wrapFun(onUnAuth)
+    selfFun(onSuccess),
+    selfFun(onError),
+    selfFun(onUnAuth)
   )
 }
 

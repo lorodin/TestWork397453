@@ -10,9 +10,9 @@ export default {
     pageInfo: {
       loading: false,
       current: 1,
-      pages: 1
+      pages: 1,
+      tasks: []
     },
-    tasks: [],
     notify: '',
     form: {
       show: false,
@@ -27,7 +27,6 @@ export default {
   }),
 
   resetTokenAction () {
-    console.log('reset token')
     localStorage.setItem('token', '')
     window.location = '/login'
   },
@@ -42,7 +41,6 @@ export default {
         window.location = '/'
       },
       onInvalid: (errors) => {
-        console.log(errors)
         this.state.login.errors = errors
         this.state.login.loading = false
       },
@@ -81,14 +79,14 @@ export default {
       name: '',
       description: '',
       completed: false
-    }].concat(this.state.tasks).find(t => t.id === id)
+    }].concat(this.state.pageInfo.tasks).find(t => t.id === id)
 
     this.state.form.errors = []
     this.state.form.show = true
   },
 
   toggleCompleteAction (id) {
-    const task = this.state.tasks.find(t => t.id === id)
+    const task = this.state.pageInfo.tasks.find(t => t.id === id)
     if (!task) {
       console.error(`Task with id ${id} not found`)
       return
@@ -99,9 +97,6 @@ export default {
       task,
       onSuccess: () => {
         this.loadTasksAction(this.state.pageInfo.current)
-      },
-      onError: (resp) => {
-        console.error(resp)
       },
       onUnAuth: () => {
         this.resetTokenAction()
@@ -129,7 +124,6 @@ export default {
         this.loadTasksAction()
       },
       onError: (resp) => {
-        console.error(resp)
         this.state.form.loading = false
       },
       onInvalid: (errors) => {
@@ -150,7 +144,7 @@ export default {
       onSuccess: (data) => {
         this.state.pageInfo.current = data.page
         this.state.pageInfo.pages = (data.count + data.per_page - data.count % data.per_page) / data.per_page
-        this.state.tasks = data.list
+        this.state.pageInfo.tasks = data.list
         this.state.pageInfo.loading = false
       },
       onError: () => {
@@ -170,8 +164,7 @@ export default {
       onSuccess: () => {
         this.loadTasksAction()
       },
-      onError: (resp) => {
-        console.log(resp)
+      onError: () => {
         this.state.pageInfo.loading = false
       },
       onUnAuth: () => {

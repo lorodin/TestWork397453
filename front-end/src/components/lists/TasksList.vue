@@ -32,7 +32,7 @@ export default {
     TaskListItem
   },
   computed: {
-    list: () => tasks.state.tasks,
+    list: () => tasks.state.pageInfo.tasks,
     pages: () => tasks.state.pageInfo.pages,
     isLoading: () => tasks.state.pageInfo.loading,
     current: () => tasks.state.pageInfo.current
